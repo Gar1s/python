@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Форма для тестування CGI</title>
+</head>
+<body>
+    <form action="/cgi-bin/form_handler.py" method="POST">
+        <label for="name">Ім'я:</label>
+        <input type="text" id="name" name="name"><br><br>
+        
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email"><br><br>
+        
+        <label>Стать:</label><br>
+        <input type="radio" id="male" name="gender" value="Чоловік">
+        <label for="male">Чоловік</label><br>
+        <input type="radio" id="female" name="gender" value="Жінка">
+        <label for="female">Жінка</label><br><br>
+        
+        <label for="programming_language">Оберіть мову програмування:</label>
+        <select id="programming_language" name="programming_language">
+            <option value="Python">Python</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="Java">Java</option>
+        </select><br><br>
+        
+        <label>Ваші хобі:</label><br>
+        <input type="checkbox" id="hobby1" name="hobbies" value="Читання">
+        <label for="hobby1">Читання</label><br>
+        <input type="checkbox" id="hobby2" name="hobbies" value="Плавання">
+        <label for="hobby2">Плавання</label><br>
+        <input type="checkbox" id="hobby3" name="hobbies" value="Музика">
+        <label for="hobby3">Музика</label><br><br>
+        
+        <input type="submit" value="Відправити">
+    </form>
+</body>
+</html>
