@@ -1,0 +1,25 @@
+body{
+    height: 100vh;
+    display: grid;
+    /* align-items: center; */
+}
+.container{
+    text-align: center;
+}
+img {
+    width: 100px;
+}
+.me{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+nav{
+    font-size: 25px;
+}
+.footer{
+    display: flex;
+    justify-content: end;
+    flex-direction: column;
+    margin-left: 20px;
+}

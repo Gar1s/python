@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="me">
+        <img src="{{ url_for('static', filename='images/1.jpg') }}" alt="Моя фотографія">
+        <h4>Eduard Partyka</h4>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Головна</a></li>
+            <li><a href="{{ url_for('page1') }}">Сторінка 1</a></li>
+            <li><a href="{{ url_for('page2') }}">Сторінка 2</a></li>
+            <li><a href="{{ url_for('page3') }}">Сторінка 3</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="footer">
+        <p>Операційна система: {{ os_info }}</p>
+        <p>User Agent: {{ user_agent }}</p>
+        <p>Поточний час: {{ current_time }}</p>
+    </div>
+</body>
+</html>
