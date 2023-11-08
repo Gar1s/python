@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Skills</h1>
+    <ul style="text-align: left;">
+        {% for skill in my_skills %}
+            <li>{{ skill['name'] }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="footer">
+        <p>Операційна система: {{ os_info }}</p>
+        <p>User Agent: {{ user_agent }}</p>
+        <p>Поточний час: {{ current_time }}</p>
+    </div>
+{% endblock %}
