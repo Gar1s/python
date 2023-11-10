@@ -1,17 +1,10 @@
-from datetime import timedelta
 from datetime import datetime
 import os
 from flask import get_flashed_messages, request, render_template, redirect, url_for, make_response, session, flash
-import json
 from application import app
 from application import credentials
+from application.forms import LoginForm
 
-
-users = {}
-with open('users.json', 'r') as file:
-    users = json.load(file)
-
-user_cookies = {}
 
 my_skills = [
     {'id': 1, 'name': 'Python'},
@@ -34,20 +27,46 @@ def page1():
 def skills():
     return render_template('skills.html', my_skills=my_skills)
 
-@app.route('/login', methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username", "")
-        password = request.form.get("password", "")
-        user = credentials.get_user_credentials(username)
-        username_match = user["username"] == username
-        password_match = user["password"] == password
-        if username_match and password_match:
-            response = redirect(url_for("info"))
-            session["username"] = username
-            return response
+# @app.route('/login', methods=["GET", "POST"])
+# def login():
+#     if request.method == "POST":
+#         username = request.form.get("username", "")
+#         password = request.form.get("password", "")
+#         user = credentials.get_user_credentials(username)
+#         username_match = user["username"] == username
+#         password_match = user["password"] == password
+#         if username_match and password_match:
+#             response = redirect(url_for("info"))
+#             session["username"] = username
+#             return response
 
-    return render_template("login.html")
+#     return render_template("login.html")
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        user = credentials.get_user_credentials(username)
+
+        if user is not None:
+            username_match = user.get("username") == username
+            password_match = user.get("password") == password
+
+            if username_match and password_match:
+                session["username"] = username
+                flash('Login successful!', 'success')
+                return redirect(url_for('info'))
+            else:
+                flash('Invalid password', 'danger')
+        else:
+            flash('User not found', 'danger')
+
+    return render_template('login.html', form=form)
+
 
 @app.route('/logout', methods=["GET", "POST"])
 def logout():
@@ -56,10 +75,10 @@ def logout():
         session.pop("username")
     return response
 
-@app.route('/info', methods=["GET", "POST"])
+@app.route('/info', methods=['GET', 'POST'])
 def info():
     print(get_flashed_messages(True))
-    username = session["username"]
+    username = session.get("username")
     if not username:
         return redirect(url_for("login"))
     return render_template("info.html")
