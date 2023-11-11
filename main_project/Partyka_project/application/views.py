@@ -3,7 +3,7 @@ import os
 from flask import get_flashed_messages, request, render_template, redirect, url_for, make_response, session, flash
 from application import app
 from application import credentials
-from application.forms import LoginForm
+from application.forms import ChangePasswordForm, LoginForm
 
 
 my_skills = [
@@ -74,39 +74,45 @@ def info():
         return redirect(url_for("login"))
     return render_template("info.html")
 
-@app.route('/change-password', methods=["POST"])
+@app.route('/change-password', methods=["GET","POST"])
 def change_password():
-    response = redirect(url_for("info"))
+    username = session.get("username")
+
+    if not username:
+        flash("User not logged in", "danger")
+        return redirect(url_for("login"))
+
+    user = credentials.get_user_credentials(username)
+
+    if user is None:
+        flash(f"User \"{username}\" doesn't exist anymore", "danger")
+        return redirect(url_for("info"))
 
     current_password = request.form.get("current-password", "")
     new_password = request.form.get("new-password", "")
     confirm_password = request.form.get("confirm-password", "")
 
-    if new_password != confirm_password:
+    if not current_password or not new_password or not confirm_password:
+        flash("All fields must be filled", "danger")
+        return redirect(url_for("info"))
+
+    if current_password != user["password"]:
+        flash("Incorrect current password", "danger")
+    elif new_password != confirm_password:
         flash("New and confirm passwords do not match", "danger")
-        return response
-
-    if not new_password:
-        flash("A new password must be provided", "danger")
-        return response
-
-    username = session["username"]
-    user = credentials.get_user_credentials(username)
-    if user is None:
-        flash(f"User \"{username}\" doesn't exist anymore", "danger")
-        return response
-
-    if current_password == user["password"]:
-        status = credentials.change_user_password(user, new_password)
-        if status == 0:
-            flash("Successfully changed password", "success")
-            return response
-        else:
-            flash("Failed to change password", "danger")
-            return response
+    elif len(new_password) < 4 or len(new_password) > 10:
+        flash("New password must be between 4 and 10 characters", "danger")
     else:
-        flash("Incorrect password was provided", "danger")
-        return response
+        if current_password == user["password"]:
+            status = credentials.change_user_password(user, new_password)
+            if status == 0:
+                flash("Successfully changed password", "success")
+            else:
+                flash("Failed to change password", "danger")
+        else:
+            flash("Incorrect password was provided", "danger")
+
+    return redirect(url_for("info"))
 
 @app.route('/setcookie', methods=["POST"])
 def setcookie():
@@ -127,7 +133,7 @@ def deletecookie():
     if request.form.get("key", ""):
         key = request.form.get("key")
         response.delete_cookie(key)
-        flash(f"Deleted cookie \"{key}\"", "success")
+        flash(f"Deleted cookie \"{key}\"", "danger")
     else:
         flash("Cookie key must be provided", "danger")
     return response
@@ -137,5 +143,5 @@ def clearcookies():
     response = redirect(url_for("info"))
     for cookie in request.cookies:
         response.delete_cookie(cookie)
-    flash("Deleted all cookies", "success")
+    flash("Deleted all cookies", "danger")
     return response
