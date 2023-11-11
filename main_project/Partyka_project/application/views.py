@@ -27,26 +27,15 @@ def page1():
 def skills():
     return render_template('skills.html', my_skills=my_skills)
 
-# @app.route('/login', methods=["GET", "POST"])
-# def login():
-#     if request.method == "POST":
-#         username = request.form.get("username", "")
-#         password = request.form.get("password", "")
-#         user = credentials.get_user_credentials(username)
-#         username_match = user["username"] == username
-#         password_match = user["password"] == password
-#         if username_match and password_match:
-#             response = redirect(url_for("info"))
-#             session["username"] = username
-#             return response
-
-#     return render_template("login.html")
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
 
-    if request.method == 'POST' and form.validate_on_submit():
+    if "username" in session:
+        flash('Login successful!', 'success')
+        return redirect(url_for('info'))
+
+    if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
 
@@ -57,9 +46,11 @@ def login():
             password_match = user.get("password") == password
 
             if username_match and password_match:
-                session["username"] = username
-                flash('Login successful!', 'success')
-                return redirect(url_for('info'))
+                if form.remember.data:
+                    session["username"] = username
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('info'))
+                return redirect('/')
             else:
                 flash('Invalid password', 'danger')
         else:
