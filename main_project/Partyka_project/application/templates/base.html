@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>{{ title }}</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
     <div class="me">
         <img src="{{ url_for('static', filename='images/1.jpg') }}" alt="Моя фотографія">
         <h4>Eduard Partyka</h4>
     </div>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('home') }}">Main</a></li>
-            <li><a href="{{ url_for('page1') }}">About Me</a></li>
-            <li><a href="{{ url_for('skills') }}">Skills</a></li>
-        </ul>
-    </nav>
+    
+    {% set navigation = {'home': 'Main', 'page1': 'About Me', 'skills': 'Skills'} %}
+    {% include 'nav.html' %}
+    
+    {% for category, message in get_flashed_messages(True) %}
+    <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
     <div class="container">
         {% block content %}{% endblock %}
     </div>
 </body>
+
 </html>
