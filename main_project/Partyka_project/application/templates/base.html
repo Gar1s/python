@@ -13,7 +13,7 @@
         <h4>Eduard Partyka</h4>
     </div>
     
-    {% set navigation = {'home': 'Main', 'page1': 'About Me', 'skills': 'Skills'} %}
+    {% set navigation = {'home': 'Main', 'page1': 'About Me', 'skills': 'Skills', 'todo': 'ToDo'} %}
     {% include 'nav.html' %}
     
     {% for category, message in get_flashed_messages(True) %}
