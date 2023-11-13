@@ -13,3 +13,8 @@ class ChangePasswordForm(FlaskForm):
     new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=4, max=10)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('new_password', message='Passwords must match')])
     submit = SubmitField('Change Password')
+
+class TodoForm(FlaskForm):
+    title = StringField("Enter a task here", validators=[DataRequired(message="This field is required.")])
+    description = StringField('Describe your task', validators=[DataRequired(message="This field is required.")])
+    submit = SubmitField("Save")

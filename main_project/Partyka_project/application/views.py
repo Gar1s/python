@@ -1,23 +1,11 @@
 from datetime import datetime
 import os
 from flask import get_flashed_messages, request, render_template, redirect, url_for, make_response, session, flash
-from application import app
+from application import app, db
 from application import credentials
-from application.forms import ChangePasswordForm, LoginForm
-from flask_sqlalchemy import SQLAlchemy
+from application.forms import ChangePasswordForm, LoginForm, TodoForm
 
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100))
-    complete = db.Column(db.Boolean)
-
-with app.app_context():
-    db.create_all()
+from application.models import Todo
 
 
 my_skills = [
@@ -160,29 +148,40 @@ def clearcookies():
     flash("Deleted all cookies", "danger")
     return response
 
-@app.route('/todo')
+@app.route('/todo', methods=['GET', 'POST'])
 def todo():
-    todo_list = db.session.query(Todo).all()
-    return render_template("todo.html", todo_list=todo_list)
+    form = TodoForm()
+    todo_list = Todo.query.all()
+    return render_template("todo.html", form=form, todo_list=todo_list)
 
-@app.route("/add", methods=["POST"])
+@app.route('/add', methods=["POST"])
 def add():
-    title = request.form.get("title")
-    new_todo = Todo(title=title, complete=False)
-    db.session.add(new_todo)
-    db.session.commit()
+    form = TodoForm()
+
+    if form.validate_on_submit():
+        title = form.title.data
+        description = form.description.data
+        new_todo = Todo(title=title, description=description, complete=False)
+        db.session.add(new_todo)
+        db.session.commit()
+        flash('Todo added successfully', 'success')
+    else:
+        flash('Invalid input. Please try again.', 'danger')
+
     return redirect(url_for("todo"))
 
-@app.route("/update/<int:todo_id>")
+@app.route('/update/<int:todo_id>')
 def update(todo_id):
-    todo = db.session.query(Todo).filter(Todo.id == todo_id).first()
+    todo = db.get_or_404(Todo, todo_id)
     todo.complete = not todo.complete
     db.session.commit()
-    return redirect(url_for("todo"))
+    flash('Todo updated successfully', 'success')
+    return redirect(url_for('todo'))
 
-@app.route("/delete/<int:todo_id>")
+@app.route('/delete/<int:todo_id>')
 def delete(todo_id):
-    todo = db.session.query(Todo).filter(Todo.id == todo_id).first()
+    todo = db.get_or_404(Todo, todo_id)
     db.session.delete(todo)
     db.session.commit()
-    return redirect(url_for("todo"))
+    flash('Todo deleted successfully', 'success')
+    return redirect(url_for('todo'))
