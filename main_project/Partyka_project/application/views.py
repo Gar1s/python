@@ -47,9 +47,9 @@ def login():
     #     return redirect(url_for('info'))
 
     if form.validate_on_submit():
-        if form.email.data == "test@gmail.com" and form.password.data == '111111':
+        if form.email.data == "test@gmail.com" and form.password.data == '123456':
             flash('Login successful!', 'success')
-            return redirect(url_for('info'))
+            return redirect(url_for('home'))
         else:
             flash('Login unsuccessful!', 'danger')
 

@@ -6,18 +6,29 @@ from wtforms.validators import DataRequired, Length, EqualTo, Email, Regexp
 from application.models import User
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    email = EmailField('Email', validators=[DataRequired(message="This field is required."), Email(message="Invalid email.")])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=4, max=10)])
     remember = BooleanField('Remember Me')
     submit = SubmitField("Sign In")
 
 class RegistrationForm(FlaskForm):
-    username = StringField(label='Username', validators=[DataRequired(message="This field is required."), 
-                                    Length(min=4, max=14, message='Username must be between 4 and 14 characters.'),
-                                        Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0, 'Username must have only letters, numbers, dots, or underscores')])
-    email = EmailField('Email', validators=[DataRequired(message="This field is required."), EmailMessage(message="Invalid email.")])
-    password =  PasswordField(label='Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
-    confirm_password =  PasswordField(label='Confirm password', validators=[DataRequired(message="This field is required."), EqualTo('password', message='Passwords must match.')])
+    username = StringField(label='Username', validators=[
+        DataRequired(message="This field is required."),
+        Length(min=4, max=14, message='Username must be between 4 and 14 characters.'),
+        Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0, 'Username must have only letters, numbers, dots, or underscores')
+    ])
+    email = EmailField('Email', validators=[
+        DataRequired(message="This field is required."),
+        Email(message="Invalid email.")
+    ])
+    password = PasswordField(label='Password', validators=[
+        DataRequired(message="This field is required."),
+        Length(min=6, message='Password must be more than 6 characters long')
+    ])
+    confirm_password = PasswordField(label='Confirm password', validators=[
+        DataRequired(message="This field is required."),
+        EqualTo('password', message='Passwords must match.')
+    ])
     submit = SubmitField('Sign up')
     
     def validate_username(self, field):
