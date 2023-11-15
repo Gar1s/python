@@ -1,11 +1,13 @@
 from datetime import datetime
 import os
+from sqlite3 import IntegrityError
 from flask import get_flashed_messages, request, render_template, redirect, url_for, make_response, session, flash
+from flask_login import current_user, login_required
 from application import app, db
 from application import credentials
 from application.forms import ChangePasswordForm, LoginForm, RegistrationForm, TodoForm
 
-from application.models import Todo
+from application.models import Todo, User
 
 
 my_skills = [
@@ -33,8 +35,15 @@ def skills():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account successfully created for {form.username.data}!', 'success')
-        return redirect(url_for('login'))
+        try:
+            user = User(username=form.username.data, email=form.email.data, password=form.password.data)
+            db.session.add(user)
+            db.session.commit()
+            flash(f'Account successfully created for {form.username.data}!', 'success')
+            return redirect(url_for('login'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'Something went wrong', 'danger')
     return render_template('register.html', form=form, title='Register')
 
 
@@ -42,16 +51,25 @@ def register():
 def login():
     form = LoginForm()
 
-    # if "username" in session:
-    #     flash('Login successful!', 'success')
-    #     return redirect(url_for('info'))
+    if 'username' in session:
+        flash('Login successful!', 'success')
+        return redirect(url_for('info'))
 
     if form.validate_on_submit():
-        if form.email.data == "test@gmail.com" and form.password.data == '123456':
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
+        user = User.query.filter_by(email=form.email.data).first()
+
+        if user and user.verify_password(form.password.data):
+            if form.remember.data:
+                session['username'] = form.email.data
+                flash('You have been logged in successfully to Info Page!', 'success')
+                print("Session:", session)  # Debug print
+                return redirect(url_for('info'))
+            else:
+                flash('You have been logged in successfully to Home Page!', 'success')
+                return redirect(url_for('home'))
         else:
-            flash('Login unsuccessful!', 'danger')
+            flash('Invalid username or password', 'warning')
+            return render_template("login.html", form=form)
 
     return render_template('login.html', form=form)
 
@@ -69,7 +87,7 @@ def info():
     username = session.get("username")
     if not username:
         return redirect(url_for("login"))
-    return render_template("info.html")
+    return render_template("info.html", username=username)
 
 @app.route('/change-password', methods=["GET","POST"])
 def change_password():
@@ -180,3 +198,9 @@ def delete(todo_id):
     db.session.commit()
     flash('Todo deleted successfully', 'success')
     return redirect(url_for('todo'))
+
+@app.route('/users')
+def users():
+    users = User.query.all()
+    total_users = len(users)
+    return render_template('users.html', users=users, total_users=total_users)
