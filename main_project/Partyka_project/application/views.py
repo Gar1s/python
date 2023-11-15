@@ -3,7 +3,7 @@ import os
 from flask import get_flashed_messages, request, render_template, redirect, url_for, make_response, session, flash
 from application import app, db
 from application import credentials
-from application.forms import ChangePasswordForm, LoginForm, TodoForm
+from application.forms import ChangePasswordForm, LoginForm, RegistrationForm, TodoForm
 
 from application.models import Todo
 
@@ -29,34 +29,29 @@ def page1():
 def skills():
     return render_template('skills.html', my_skills=my_skills)
 
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account successfully created for {form.username.data}!', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form, title='Register')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
 
-    if "username" in session:
-        flash('Login successful!', 'success')
-        return redirect(url_for('info'))
+    # if "username" in session:
+    #     flash('Login successful!', 'success')
+    #     return redirect(url_for('info'))
 
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-
-        user = credentials.get_user_credentials(username)
-
-        if user is not None:
-            username_match = user.get("username") == username
-            password_match = user.get("password") == password
-
-            if username_match and password_match:
-                if form.remember.data:
-                    session["username"] = username
-                    flash('Login successful!', 'success')
-                    return redirect(url_for('info'))
-                return redirect('/')
-            else:
-                flash('Invalid password', 'danger')
+        if form.email.data == "test@gmail.com" and form.password.data == '111111':
+            flash('Login successful!', 'success')
+            return redirect(url_for('info'))
         else:
-            flash('User not found', 'danger')
+            flash('Login unsuccessful!', 'danger')
 
     return render_template('login.html', form=form)
 
