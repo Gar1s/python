@@ -33,6 +33,9 @@ def skills():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        flash('You already have an account!', 'success')
+        return redirect(url_for('info'))
     form = RegistrationForm()
     if form.validate_on_submit():
         try:
@@ -49,11 +52,11 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-
-    if 'username' in session:
-        flash('Login successful!', 'success')
+    if current_user.is_authenticated:
+        flash('You already logged in!', 'success')
         return redirect(url_for('info'))
+    
+    form = LoginForm()
 
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
