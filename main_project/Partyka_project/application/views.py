@@ -77,6 +77,11 @@ def logout():
     flash('You have been logged out successfully', 'success')
     return redirect(url_for('login'))
 
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html')
+
 @app.route('/info', methods=['GET', 'POST'])
 def info():
     print(get_flashed_messages(True))
