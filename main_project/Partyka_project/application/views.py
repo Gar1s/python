@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 from sqlite3 import IntegrityError
 from flask import get_flashed_messages, request, render_template, redirect, url_for, make_response, session, flash
-from flask_login import current_user, login_required, login_user
+from flask_login import current_user, login_required, login_user, logout_user
 from application import app, db
 from application import credentials
 from application.forms import ChangePasswordForm, LoginForm, RegistrationForm, TodoForm
@@ -71,12 +71,11 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/logout', methods=["GET", "POST"])
+@app.route('/logout', methods=['POST'])
 def logout():
-    response = redirect(url_for("login"))
-    if "username" in session:
-        session.pop("username")
-    return response
+    logout_user()
+    flash('You have been logged out successfully', 'success')
+    return redirect(url_for('login'))
 
 @app.route('/info', methods=['GET', 'POST'])
 def info():
