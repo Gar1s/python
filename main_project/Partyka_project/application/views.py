@@ -5,9 +5,10 @@ from flask import get_flashed_messages, request, render_template, redirect, url_
 from flask_login import current_user, login_required, login_user, logout_user
 from application import app, db
 from application import credentials
-from application.forms import ChangePasswordForm, LoginForm, RegistrationForm, TodoForm
+from application.forms import ChangePasswordForm, LoginForm, RegistrationForm, TodoForm, UpdateAccountForm
 
 from application.models import Todo, User
+from application.utility_for_saving_imgs import save_picture
 
 
 my_skills = [
@@ -80,7 +81,29 @@ def logout():
 @app.route('/account')
 @login_required
 def account():
-    return render_template('account.html')
+    update_account_form = UpdateAccountForm()
+    change_password_form = ChangePasswordForm()
+
+    if update_account_form.validate_on_submit():
+        if update_account_form.picture.data:
+            current_user.image_file = save_picture(update_account_form.picture.data)
+        try:
+            current_user.username = update_account_form.username.data
+            current_user.email = update_account_form.email.data
+            current_user.about_me = update_account_form.about_me.data
+            db.session.commit()
+            flash('Your account has been updated!', 'success')
+        except:
+            db.session.rollback()
+            flash("Failed to update!", category="danger") 
+        return redirect(url_for('account'))
+
+    elif request.method == 'GET':
+        update_account_form.username.data = current_user.username
+        update_account_form.email.data = current_user.email
+        update_account_form.about_me.data =  current_user.about_me
+
+    return render_template('account.html', update_account_form=update_account_form, change_password_form=change_password_form)
 
 @app.route('/info', methods=['GET', 'POST'])
 @login_required

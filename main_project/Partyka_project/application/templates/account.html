@@ -1,9 +1,27 @@
 {% from "macros.html" import render_field %}
 
 {% block body %}
-    <img alt="..." class="img-fluid rounded-circle shadow-lg" src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" 
-                                                        style="width: 150px; height: 150px;">
-    <h2>{{ current_user.username }}</h2>
-    <h3>{{ current_user.email }}</h3>
+<img alt="..." class="img-fluid rounded-circle shadow-lg"
+    src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}"
+    style="width: 150px; height: 150px;">
+<h2>{{ current_user.username }}</h2>
+<h3>{{ current_user.email }}</h3>
+
+<form method="post" action="{{ url_for('account') }}" id="edit_profile_form" novalidate enctype="multipart/form-data">
+    {{ update_account_form.csrf_token }}
+    {{ render_field(update_account_form.username)}}
+    {{ render_field(update_account_form.email)}}
+
+    <div class="form-group">
+        <label for="picture">Profile Picture</label>
+        <div class="custom-file">
+            {{ update_account_form.picture(class="custom-file-input", id="picture") }}
+            <label class="custom-file-label" for="picture" id="custom-file-label">Choose file...</label>
+        </div>
+    </div>
+    {{ render_field(update_account_form.about_me)}}
+    
+    {{ update_account_form.submit(class="btn-round btn btn-primary btn-lg") }}
+</form>
 
 {% endblock %}
