@@ -83,11 +83,10 @@ def account():
     return render_template('account.html')
 
 @app.route('/info', methods=['GET', 'POST'])
+@login_required
 def info():
     print(get_flashed_messages(True))
-    username = session.get("username")
-    if not username:
-        return redirect(url_for("login"))
+    username = current_user.username
     return render_template("info.html", username=username)
 
 @app.route('/change-password', methods=["GET","POST"])
