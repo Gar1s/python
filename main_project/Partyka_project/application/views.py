@@ -5,9 +5,10 @@ from flask import get_flashed_messages, request, render_template, redirect, url_
 from flask_login import current_user, login_required, login_user, logout_user
 from application import app, db
 from application import credentials
-from application.forms import ChangePasswordForm, LoginForm, RegistrationForm, TodoForm
+from application.forms import ChangePasswordForm, LoginForm, RegistrationForm, TodoForm, UpdateAccountForm
 
 from application.models import Todo, User
+from application.utility_for_saving_imgs import save_picture
 
 
 my_skills = [
@@ -77,10 +78,33 @@ def logout():
     flash('You have been logged out successfully', 'success')
     return redirect(url_for('login'))
 
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html')
+    print(get_flashed_messages(True))
+    update_account_form = UpdateAccountForm()
+    change_password_form = ChangePasswordForm()
+
+    if update_account_form.validate_on_submit():
+        if update_account_form.picture.data:
+            current_user.image_file = save_picture(update_account_form.picture.data)
+        try:
+            current_user.username = update_account_form.username.data
+            current_user.email = update_account_form.email.data
+            current_user.about_me = update_account_form.about_me.data
+            db.session.commit()
+            flash('Your account has been updated!', 'success')
+        except:
+            db.session.rollback()
+            flash("Failed to update!", category="danger") 
+        return redirect(url_for('account'))
+
+    elif request.method == 'GET':
+        update_account_form.username.data = current_user.username
+        update_account_form.email.data = current_user.email
+        update_account_form.about_me.data =  current_user.about_me
+
+    return render_template('account.html', update_account_form=update_account_form, change_password_form=change_password_form)
 
 @app.route('/info', methods=['GET', 'POST'])
 @login_required
@@ -89,45 +113,24 @@ def info():
     username = current_user.username
     return render_template("info.html", username=username)
 
-@app.route('/change-password', methods=["GET","POST"])
+@app.route('/change-password', methods=["GET", "POST"])
+@login_required
 def change_password():
-    username = session.get("username")
+    form = ChangePasswordForm()
 
-    if not username:
-        flash("User not logged in", "danger")
-        return redirect(url_for("login"))
+    if form.validate_on_submit():
+        new_password = form.new_password.data
+        try:
+            current_user.set_password(new_password)
+            db.session.commit()
+            flash('Password updated successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash("Failed to update!", category="danger")
 
-    user = credentials.get_user_credentials(username)
+        return redirect(url_for('account'))
 
-    if user is None:
-        flash(f"User \"{username}\" doesn't exist anymore", "danger")
-        return redirect(url_for("info"))
-
-    current_password = request.form.get("current-password", "")
-    new_password = request.form.get("new-password", "")
-    confirm_password = request.form.get("confirm-password", "")
-
-    if not current_password or not new_password or not confirm_password:
-        flash("All fields must be filled", "danger")
-        return redirect(url_for("info"))
-
-    if current_password != user["password"]:
-        flash("Incorrect current password", "danger")
-    elif new_password != confirm_password:
-        flash("New and confirm passwords do not match", "danger")
-    elif len(new_password) < 4 or len(new_password) > 10:
-        flash("New password must be between 4 and 10 characters", "danger")
-    else:
-        if current_password == user["password"]:
-            status = credentials.change_user_password(user, new_password)
-            if status == 0:
-                flash("Successfully changed password", "success")
-            else:
-                flash("Failed to change password", "danger")
-        else:
-            flash("Incorrect password was provided", "danger")
-
-    return redirect(url_for("info"))
+    return render_template('account.html', change_password_form=form, update_account_form=UpdateAccountForm())
 
 @app.route('/setcookie', methods=["POST"])
 def setcookie():
@@ -204,3 +207,13 @@ def users():
     users = User.query.all()
     total_users = len(users)
     return render_template('users.html', users=users, total_users=total_users)
+
+@app.after_request
+def after_request(response):
+    if current_user:
+        current_user.last_seen = datetime.now()
+        try:
+            db.session.commit()
+        except:
+            flash('Error while update user last seen!', 'danger')
+    return response
