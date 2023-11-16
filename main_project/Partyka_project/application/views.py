@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 from sqlite3 import IntegrityError
 from flask import get_flashed_messages, request, render_template, redirect, url_for, make_response, session, flash
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, login_user
 from application import app, db
 from application import credentials
 from application.forms import ChangePasswordForm, LoginForm, RegistrationForm, TodoForm
@@ -61,8 +61,8 @@ def login():
         if user and user.verify_password(form.password.data):
             if form.remember.data:
                 session['username'] = form.email.data
+                login_user(user, remember=form.remember.data)
                 flash('You have been logged in successfully to Info Page!', 'success')
-                print("Session:", session)  # Debug print
                 return redirect(url_for('info'))
             else:
                 flash('You have been logged in successfully to Home Page!', 'success')
