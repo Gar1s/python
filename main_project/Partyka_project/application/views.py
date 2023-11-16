@@ -59,17 +59,11 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
 
         if user and user.verify_password(form.password.data):
-            if form.remember.data:
-                session['username'] = form.email.data
-                login_user(user, remember=form.remember.data)
-                flash('You have been logged in successfully to Info Page!', 'success')
-                return redirect(url_for('info'))
-            else:
-                flash('You have been logged in successfully to Home Page!', 'success')
-                return redirect(url_for('home'))
+            login_user(user, remember=form.remember.data)
+            flash('You have been logged in successfully to Info Page!', 'success')
+            return redirect(url_for('info'))
         else:
             flash('Invalid username or password', 'warning')
-            return render_template("login.html", form=form)
 
     return render_template('login.html', form=form)
 
