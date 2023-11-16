@@ -1,6 +1,9 @@
-
-{% block title %} Account{% endblock %}
+{% from "macros.html" import render_field %}
 
 {% block body %}
-<h1 class="title">{{current_user.username}}</h1>
+    <img alt="..." class="img-fluid rounded-circle shadow-lg" src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" 
+                                                        style="width: 150px; height: 150px;">
+    <h2>{{ current_user.username }}</h2>
+    <h3>{{ current_user.email }}</h3>
+
 {% endblock %}
