@@ -1,4 +1,5 @@
-from application import db
+from flask_login import UserMixin
+from application import db, login_manager
 import bcrypt
 
 class Todo(db.Model):
@@ -7,7 +8,11 @@ class Todo(db.Model):
     complete = db.Column(db.Boolean)
     description = db.Column(db.String(250))
 
-class User(db.Model):
+@login_manager.user_loader
+def user_loader(user_id):
+    return User.query.get(int(user_id))
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
