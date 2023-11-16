@@ -67,10 +67,6 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is taken. Please choose a different one.')
 
 class ChangePasswordForm(FlaskForm):
-    # current_password = PasswordField('Current Password', validators=[DataRequired()])
-    # new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=4, max=10)])
-    # confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('new_password', message='Passwords must match')])
-    # submit = SubmitField('Change Password')
     current_password = PasswordField(label='Current Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
     new_password = PasswordField(label='New Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
     confirm_password = PasswordField(label='Confirm New Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
