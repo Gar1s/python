@@ -58,7 +58,7 @@
 
         <div class="function-card">
             <h2 class="function-title">Add Cookie</h2>
-            <form action="{{ url_for('setcookie') }}" method="POST">
+            <form action="{{ url_for('info.setcookie') }}" method="POST">
                 <div class="form-group">
                     <label for="inputCookieKey">Cookie</label>
                     <input type="text" class="form-control" name="key" id="inputCookieKey" required>
@@ -77,7 +77,7 @@
 
         <div class="function-card">
             <h2 class="function-title">Delete Cookie</h2>
-            <form action="{{ url_for('deletecookie') }}" method="POST">
+            <form action="{{ url_for('info.deletecookie') }}" method="POST">
                 <div class="form-group">
                     <label for="inputCookieKey2">Cookie</label>
                     <input type="text" class="form-control" name="key" id="inputCookieKey2" required>
@@ -88,14 +88,14 @@
 
         <div class="function-card">
             <h2 class="function-title">Delete All Cookies</h2>
-            <form action="{{ url_for('clearcookies') }}" method="POST">
+            <form action="{{ url_for('info.clearcookies') }}" method="POST">
                 <button type="submit" class="btn btn-danger">Delete All Cookies</button>
             </form>
         </div>
 
         <div class="function-card">
             <h2 class="function-title">Log Out</h2>
-            <form action="{{ url_for('logout') }}" method="POST">
+            <form action="{{ url_for('auth.logout') }}" method="POST">
                 <button type="submit" class="btn btn-danger">Log Out</button>
             </form>
         </div>
