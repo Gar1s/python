@@ -5,7 +5,7 @@ from wtforms import EmailField, FileField, StringField, PasswordField, BooleanFi
 from wtforms.validators import DataRequired, Length, EqualTo, Email, Regexp
 from flask_wtf.file import FileField, FileAllowed
 
-from application.models import User
+from application.auth.models import User
 
 class LoginForm(FlaskForm):
     # username = StringField('Username', validators=[DataRequired()])
@@ -75,8 +75,3 @@ class ChangePasswordForm(FlaskForm):
     def validate_current_password(self, field):
         if not current_user.verify_password(field.data):
             raise ValidationError('Incorrect current password. Please try again.')
-
-class TodoForm(FlaskForm):
-    title = StringField("Enter a task here", validators=[DataRequired(message="This field is required.")])
-    description = StringField('Describe your task', validators=[DataRequired(message="This field is required.")])
-    submit = SubmitField("Save")

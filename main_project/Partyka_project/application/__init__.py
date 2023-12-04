@@ -2,17 +2,35 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from config import config
 
-app = Flask(__name__)
-app.secret_key = b"secret"
+db = SQLAlchemy()
+migrate = Migrate()
+login_manager = LoginManager()
 
-app.config.from_object('config')
+def create_app(config_name="default"):
+    app = Flask(__name__, instance_relative_config=False)
 
-db = SQLAlchemy(app)
+    app.config.from_object(config.get(config_name))
 
-migrate = Migrate(app, db)
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
-login_manager.login_message_category = 'info'
+    db.init_app(app)
+    migrate.init_app(app, db)
 
-from application import views
+    login_manager.init_app(app)
+    login_manager.login_view = "login"
+    login_manager.login_message_category = "info"
+
+    with app.app_context():
+        from .portfolio import portfolio_blueprint
+        from .auth import auth_blueprint
+        from .info import info_blueprint
+        from .todo import todo_blueprint
+        from .users import users_blueprint
+
+        app.register_blueprint(portfolio_blueprint)
+        app.register_blueprint(auth_blueprint)
+        app.register_blueprint(info_blueprint)
+        app.register_blueprint(todo_blueprint)
+        app.register_blueprint(users_blueprint)
+    
+    return app

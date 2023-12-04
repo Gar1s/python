@@ -19,7 +19,7 @@
         {% endwith %}
 
 
-        <form method="post" action="{{ url_for('add') }}" novalidate>
+        <form method="post" action="{{ url_for('todo.add') }}" novalidate>
           {{ form.csrf_token }}
           <div class="form-group">
               {{ render_field(form.title) }}
@@ -35,10 +35,10 @@
                     <strong>{{ todo.title }}</strong>
                     <p><strong>Description:</strong> {{ todo.description }}</p>
                     <span class="float-right">
-                        <a href="{{ url_for('update', todo_id=todo.id) }}" class="btn btn-sm btn-success">
+                        <a href="{{ url_for('todo.update', todo_id=todo.id) }}" class="btn btn-sm btn-success">
                             {% if todo.complete %} Mark Incomplete {% else %} Mark Complete {% endif %}
                         </a>
-                        <a href="{{ url_for('delete', todo_id=todo.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                        <a href="{{ url_for('todo.delete', todo_id=todo.id) }}" class="btn btn-sm btn-danger">Delete</a>
                     </span>
                 </li>
             {% endfor %}

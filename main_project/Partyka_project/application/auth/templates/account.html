@@ -27,7 +27,7 @@
 
         <h1 class="title mt-4">Edit profile</h1>
 
-        <form method="post" action="{{ url_for('account') }}" id="edit_profile_form" novalidate enctype="multipart/form-data">
+        <form method="post" action="{{ url_for('auth.account') }}" id="edit_profile_form" novalidate enctype="multipart/form-data">
             {{ update_account_form.csrf_token }}
             <div class="form-group">
                 {{ render_field(update_account_form.username) }}
@@ -51,7 +51,7 @@
 
         <h1 class="title mt-4">Change password</h1>
 
-        <form method="post" action="{{ url_for('change_password') }}" id="change_password_form" novalidate>
+        <form method="post" action="{{ url_for('auth.change_password') }}" id="change_password_form" novalidate>
             {{ change_password_form.csrf_token }}
             <div class="form-group">
                 {{ render_field(change_password_form.current_password) }}
