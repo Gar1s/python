@@ -26,11 +26,13 @@ def create_app(config_name="default"):
         from .info import info_blueprint
         from .todo import todo_blueprint
         from .users import users_blueprint
+        from .post import post_blueprint
 
         app.register_blueprint(portfolio_blueprint)
         app.register_blueprint(auth_blueprint)
         app.register_blueprint(info_blueprint)
         app.register_blueprint(todo_blueprint)
         app.register_blueprint(users_blueprint)
+        app.register_blueprint(post_blueprint)
     
     return app
