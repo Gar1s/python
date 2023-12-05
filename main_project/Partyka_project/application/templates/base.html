@@ -18,7 +18,7 @@
         <h4>Eduard Partyka</h4>
     </div>
     {% if current_user.is_authenticated %}
-        {% set navigation = {'portfolio.home': 'Main', 'portfolio.page1': 'About Me', 'portfolio.skills': 'Skills', 'todo.todo': 'ToDo', 'account.account': 'Account'} %}
+        {% set navigation = {'portfolio.home': 'Main', 'portfolio.page1': 'About Me', 'portfolio.skills': 'Skills', 'todo.todo': 'ToDo', 'auth.account': 'Account'} %}
     {% else %}
         {% set navigation = {'portfolio.home': 'Main', 'portfolio.page1': 'About Me', 'portfolio.skills': 'Skills', 'todo.todo': 'ToDo'} %}
     {% endif %}
