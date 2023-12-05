@@ -5,10 +5,9 @@ from wtforms import EmailField, FileField, StringField, PasswordField, BooleanFi
 from wtforms.validators import DataRequired, Length, EqualTo, Email, Regexp
 from flask_wtf.file import FileField, FileAllowed
 
-from application.auth.models import User
+from .models import User
 
 class LoginForm(FlaskForm):
-    # username = StringField('Username', validators=[DataRequired()])
     email = EmailField('Email', validators=[DataRequired(message="This field is required."), Email(message="Invalid email.")])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=4, max=10)])
     remember = BooleanField('Remember Me')

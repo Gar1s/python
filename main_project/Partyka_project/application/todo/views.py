@@ -2,8 +2,8 @@ from flask import render_template, redirect, url_for, flash
 from application import db
 
 
-from application.auth.models import Todo
-from application.todo.forms import TodoForm
+from .models import Todo
+from .forms import TodoForm
 
 from . import todo_blueprint
 

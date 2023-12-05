@@ -3,12 +3,6 @@ from flask_login import UserMixin
 from application import db, login_manager
 import bcrypt
 
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100))
-    complete = db.Column(db.Boolean)
-    description = db.Column(db.String(250))
-
 @login_manager.user_loader
 def user_loader(user_id):
     return User.query.get(int(user_id))

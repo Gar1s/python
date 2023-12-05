@@ -1,13 +1,33 @@
-{% macro render_field(field) %}
-    <div class="form-group">
-        <label for="{{ field.id }}" class="form-control-label">{{ field.label.text }}</label>
-        {{ field(class="form-control") }}
-        {% if field.errors %}
-            <ul class="errors">
-                {% for error in field.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
+{% macro render_field(field, show_label=true, show_errors=true, id='') %}
+  <div class="form-group">
+    {% if show_label %}
+      <label for="{{ field.id }}" class="control-label">{{ field.label }}</label>
+    {% endif %}
+
+    {% set error_class = ' is-invalid' if field.errors else '' %}
+    {% set placeholder_value = 'Incorrect input' if field.errors else field.label.text %}
+
+    {% if field.type == 'SelectField' %}
+      {{ field(class_="form-control" ~ error_class, id=id, style="background-color: #32325d; color: white;")|safe }}
+    {% elif field.type == 'SelectMultipleField' %}
+      <div class="checkboxes">
+        {% for checkbox in field %}
+          <div class="form-check form-check-inline custom-checkbox">
+            <input type="checkbox" id="{{ checkbox.id }}" name="{{ checkbox.name }}" class="form-check-input" value="{{ checkbox.data }}" {% if checkbox.checked %} checked {% endif %}>
+            <label for="{{ checkbox.id }}" class="form-check-label">{{ checkbox.label.text }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      {{ field(class="form-control" ~ error_class, placeholder=placeholder_value, id=id)|safe }}
+    {% endif %}
+
+    {% if show_errors and field.errors %}
+      <ul class="errors">
+        {% for error in field.errors %}
+          <p class="danger">{{ error }}</p>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
 {% endmacro %}
