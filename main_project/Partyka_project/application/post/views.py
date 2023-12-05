@@ -64,6 +64,8 @@ def edit_post(post_id):
     if form.validate_on_submit():
         if form.image.data:
             post.image = save_picture(form.image.data)
+        else:
+            post.image = 'postdefault.jpg'
         try:
             post.title = form.title.data
             post.text = form.text.data
@@ -71,7 +73,7 @@ def edit_post(post_id):
             post.enabled = bool(form.enabled.data)
             post.category = Category.query.get(form.category.data)
             post.tags = [Tag.query.get(tag_id) for tag_id in form.tags.data]
-
+        
             db.session.commit()
             flash('Post has been updated!', 'success')
         except Exception as e:

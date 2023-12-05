@@ -5,8 +5,7 @@ from flask_wtf.file import FileField, FileAllowed
 from wtforms.widgets import CheckboxInput, ListWidget
 
 type_choices = [("news", "News"), ("publication", "Publication"), ("other", "Other")]
-enabled_choices = [(True, "True"), (False, "False")]
-
+enabled_choices = [(True, "True")]
 
 class PostForm(FlaskForm):
     title = StringField(
@@ -31,16 +30,25 @@ class PostForm(FlaskForm):
 
 
 class EditPostForm(FlaskForm):
-    title = StringField(label="Title")
-    text = TextAreaField(label="Write your post here")
+    title = StringField(
+        label="Title", validators=[DataRequired(message="This field is required.")]
+    )
+    text = TextAreaField(
+        label="Write your post here",
+        validators=[DataRequired(message="This field is required.")],
+    )
     image = FileField(
         "Post Picture",
         validators=[FileAllowed(["jpg", "png"], message="This file is not allowed")],
     )
-    type = SelectField("Type", choices=type_choices)
+    type = SelectField(
+        "Type",
+        choices=type_choices,
+        validators=[DataRequired(message="Please select a type.")],
+    )
     enabled = SelectField("Enabled", choices=enabled_choices)
-    category = SelectField('Category')
-    tags = SelectMultipleField('Tags', coerce=int, option_widget=CheckboxInput())
+    category = SelectField('Category', validators=[DataRequired(message="This field is required.")])
+    tags = SelectMultipleField('Tags', validators=[DataRequired(message="This field is required.")], coerce=int, option_widget=CheckboxInput(), widget=ListWidget(prefix_label=False))
     submit = SubmitField("Submit")
     
 class CategoryForm(FlaskForm):
