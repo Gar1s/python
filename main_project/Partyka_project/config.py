@@ -20,12 +20,15 @@ class ProdConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(basedir, 'instance/db.sqlite')
 
+class TestConfig(Config):
+    DEVELOPMENT = True
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(basedir, 'instance/db_test.sqlite')
+    WTF_CSRF_ENABLED = False
+
 config = {
     'dev': DevConfig,
     'prod': ProdConfig,
     'default': DevConfig,
+    'test' : TestConfig
 }
-
-
-# SECRET_KEY = b"secret"
-# SESSION_PERMANENT = True
