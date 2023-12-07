@@ -52,7 +52,7 @@ def login():
 
         if user and user.verify_password(form.password.data):
             login_user(user, remember=form.remember.data)
-            flash('You have been logged in successfully to Account Page!', 'success')
+            flash('You have been logged in successfully!', 'success')
             return redirect(url_for('auth.account'))
         else:
             flash('Invalid username or password', 'warning')

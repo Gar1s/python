@@ -1,10 +1,7 @@
 from flask import render_template, redirect, url_for, flash
 from application import db
-
-
 from .models import Todo
 from .forms import TodoForm
-
 from . import todo_blueprint
 
 @todo_blueprint.route('/todo', methods=['GET', 'POST'])
