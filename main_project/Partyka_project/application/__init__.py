@@ -27,6 +27,7 @@ def create_app(config_name="default"):
         from .todo import todo_blueprint
         from .users import users_blueprint
         from .post import post_blueprint
+        from.api import api_bp
 
         app.register_blueprint(portfolio_blueprint)
         app.register_blueprint(auth_blueprint)
@@ -34,5 +35,6 @@ def create_app(config_name="default"):
         app.register_blueprint(todo_blueprint)
         app.register_blueprint(users_blueprint)
         app.register_blueprint(post_blueprint)
+        app.register_blueprint(api_bp)
     
     return app
