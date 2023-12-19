@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required
 
 from application.todo.models import Todo
 from . import api_bp
@@ -6,6 +7,7 @@ from application import db
 from sqlalchemy.exc import IntegrityError
 
 @api_bp.route('/todos', methods=['GET'])
+@jwt_required()
 def get_todos():
     todos = Todo.query.all()
     
@@ -23,6 +25,7 @@ def get_todos():
     return jsonify(todo_dict)
 
 @api_bp.route('/todo', methods=['POST'])
+@jwt_required()
 def post_todos():
     new_data = request.get_json()
     
@@ -44,6 +47,7 @@ def post_todos():
     }), 201
     
 @api_bp.route('/todo/<int:id>', methods=['GET'])
+@jwt_required()
 def get_todo(id):
     todo = Todo.query.filter_by(id=id).first()
     
@@ -57,6 +61,7 @@ def get_todo(id):
     }), 200
     
 @api_bp.route('/todo/<int:id>', methods=['PUT'])
+@jwt_required()
 def update_todo(id):
     todo = Todo.query.filter_by(id=id).first()
     
@@ -82,6 +87,7 @@ def update_todo(id):
     return jsonify(message='todo was updated'), 200
 
 @api_bp.route('/todo/<int:id>', methods=['DELETE'])
+@jwt_required()
 def delete_todo(id):
       todo = Todo.query.get(id)
       db.session.delete(todo)
