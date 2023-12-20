@@ -54,3 +54,48 @@ def post_call():
         "caller": new_call.caller,
         "receiver": new_call.receiver
     }), 201
+
+@phone_call_api_bp.route('/call/<int:id>', methods=['GET'])
+@jwt_required()
+def get_call(id):
+    call = PhoneCall.query.filter_by(id=id).first()
+    if not call:
+        return jsonify(message=f"call with id {id} not found"), 404
+    return jsonify({
+        "id": call.id,
+        "number_of_caller": call.number_of_caller,
+        "number_of_receiver": call.number_of_receiver,
+        "caller": call.caller,
+        "receiver": call.receiver
+    }), 200
+
+@phone_call_api_bp.route('/call/<int:id>', methods=['PUT'])
+@jwt_required()
+def update_call(id):
+    call = PhoneCall.query.filter_by(id=id).first()
+    if not call:
+        return jsonify(message=f"call with id {id} not found"), 404
+    new_data = request.get_json()
+    if not new_data:
+        return jsonify(message='no input data provided'), 400
+    if new_data.get('number_of_caller'):
+        call.number_of_caller = new_data.get('number_of_caller')
+    if new_data.get('number_of_receiver'):
+        call.number_of_receiver = new_data.get('number_of_receiver')
+    if new_data.get('caller'):
+        call.caller = new_data.get('caller')
+    if new_data.get('receiver'):
+        call.receiver = new_data.get('receiver')
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+    return jsonify(message='call was updated'), 200
+
+@phone_call_api_bp.route('/call/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_call(id):
+      call = PhoneCall.query.get(id)
+      db.session.delete(call)
+      db.session.commit()
+      return jsonify({'message' : 'call has been deleted!'}), 200
