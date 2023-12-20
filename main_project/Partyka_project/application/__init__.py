@@ -34,7 +34,7 @@ def create_app(config_name="default"):
         from .post import post_blueprint
         from .api import api_bp
         from .auth_api import auth_api_bp
-        from .phone_call_api import phone_call_api_bp
+        from .phone_call import phone_call_api_bp
 
         app.register_blueprint(portfolio_blueprint)
         app.register_blueprint(auth_blueprint)
