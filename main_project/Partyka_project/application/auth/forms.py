@@ -7,6 +7,16 @@ from flask_wtf.file import FileField, FileAllowed
 
 from .models import User
 
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField(label='Current Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
+    new_password = PasswordField(label='New Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
+    confirm_password = PasswordField(label='Confirm New Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
+    submit = SubmitField("Change Password")
+
+    def validate_current_password(self, field):
+        if not current_user.verify_password(field.data):
+            raise ValidationError('Incorrect current password. Please try again.')
+
 class LoginForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired(message="This field is required."), Email(message="Invalid email.")])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=4, max=10)])
@@ -64,13 +74,3 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
-
-class ChangePasswordForm(FlaskForm):
-    current_password = PasswordField(label='Current Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
-    new_password = PasswordField(label='New Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
-    confirm_password = PasswordField(label='Confirm New Password', validators=[DataRequired(message="This field is required."), Length(min=6, message='Password must be more than 6 characters long')])
-    submit = SubmitField("Change Password")
-
-    def validate_current_password(self, field):
-        if not current_user.verify_password(field.data):
-            raise ValidationError('Incorrect current password. Please try again.')
