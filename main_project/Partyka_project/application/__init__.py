@@ -4,12 +4,14 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from flask_jwt_extended import JWTManager
+import marshmallow
 from config import config
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 basic_auth = HTTPBasicAuth(scheme='Bearer')
+ma = marshmallow()
 
 def create_app(config_name="default"):
     app = Flask(__name__, instance_relative_config=False)
@@ -18,6 +20,7 @@ def create_app(config_name="default"):
 
     db.init_app(app)
     migrate.init_app(app, db)
+    ma.init_app(app)
 
     JWTManager(app)
 
@@ -35,6 +38,8 @@ def create_app(config_name="default"):
         from .api import api_bp
         from .auth_api import auth_api_bp
         from .phone_call import phone_call_api_bp
+        from .user_api import users_api_bp
+
 
         app.register_blueprint(portfolio_blueprint)
         app.register_blueprint(auth_blueprint)
@@ -45,5 +50,6 @@ def create_app(config_name="default"):
         app.register_blueprint(api_bp)
         app.register_blueprint(auth_api_bp)
         app.register_blueprint(phone_call_api_bp)
+        app.register_blueprint(users_api_bp)
     
     return app
