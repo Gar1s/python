@@ -4,14 +4,14 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from flask_jwt_extended import JWTManager
-import marshmallow
+from flask_marshmallow import Marshmallow
 from config import config
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 basic_auth = HTTPBasicAuth(scheme='Bearer')
-ma = marshmallow()
+ma = Marshmallow()
 
 def create_app(config_name="default"):
     app = Flask(__name__, instance_relative_config=False)
