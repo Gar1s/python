@@ -39,6 +39,7 @@ def create_app(config_name="default"):
         from .auth_api import auth_api_bp
         from .phone_call import phone_call_api_bp
         from .user_api import users_api_bp
+        from .swagger import swagger_bp
 
 
         app.register_blueprint(portfolio_blueprint)
@@ -51,5 +52,6 @@ def create_app(config_name="default"):
         app.register_blueprint(auth_api_bp)
         app.register_blueprint(phone_call_api_bp)
         app.register_blueprint(users_api_bp)
+        app.register_blueprint(swagger_bp)
     
     return app
